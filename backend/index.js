@@ -13,7 +13,10 @@ const data = require('./data')
 conntectDB();
 
 console.log(cloudinary.config());
-app.use(cors())
+app.use(cors({
+    origin: "*",
+    credentials: true,
+}))
 app.use(express.json());
 app.use(express.static('public'));
 

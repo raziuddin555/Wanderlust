@@ -40,10 +40,38 @@ function ListState({ children }) {
         errorEmitter(data.message);
       }
     } catch (error) {
-      console.log(error)
       errorEmitter("internal server error");
     }
   };
+
+  // const addListFun = async (list, setListing) => {
+  //   try {
+  //     const response = await fetch(`${baseUrls}/api/v3.2/post/addlist`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         "auth-token": localStorage.getItem("token"),
+  //       },
+  //       body: JSON.stringify(list),
+  //     });
+  //     const data = await response.json();
+  //     console.log(data);
+  //     if (data.success) {
+  //       successEmitter(data.message);
+  //       setListing({
+  //         title: "",
+  //         description: "",
+  //         price: "",
+  //         location: "",
+  //         country: "",
+  //       });
+  //     } else {
+  //       errorEmitter(data.message);
+  //     }
+  //   } catch (error) {
+  //     errorEmitter("internal server error");
+  //   }
+  // };
 
   const getAllList = async () => {
     const response = await fetch(`${baseUrls}/api/v3.2/post/alllist`);

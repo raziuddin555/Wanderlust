@@ -5,59 +5,56 @@ const listingModel = require("../schema/listing.model");
 const uploads = require("../middleware/multer");
 const uploadOnCloudinary = require("../cloudinary/uploadOnCloudinary");
 
-router.post("/addlist", isVerifyUser, uploads.single("image"), async(req, res) => {
-    console.log(req.file);
+router.post(
+    "/addlist",
+    isVerifyUser,
+    uploads.single("image"),
+    async(req, res) => {
+        console.log(req.file);
 
 
-    const { title, description, price, location, country } = req.body;
-    console.log(req.user);
+        console.log("req.body:", req.body);
+        console.log("req.user:", req.user);
 
-    // // check if file is missisng 
-    // if (!req.file) {
-    //     return res.status(400).json({
-    //         success: false,
-    //         message: "Image is required Please upload an image",
-    //     })
-    // }
+        const { title, description, price, location, country } = req.body;
+        console.log(req.user);
 
-    try {
+        try {
+            let imageUrl = await uploadOnCloudinary(req.file.path);
+            console.log(imageUrl);
 
-        // Upload file to cloudinary
+            if (!imageUrl) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Please upload an image.",
+                });
+            }
 
-        let imageUrl = await uploadOnCloudinary(req.file.path);
-        console.log(imageUrl);
-
-        if (!imageUrl) {
-            return res.status(400).json({
+            const list = await listingModel.create({
+                title,
+                description,
+                price,
+                location,
+                country,
+                // image:filename,
+                // image: req.file.path,
+                image: imageUrl,
+                createdby: req.user,
+            });
+            res.status(200).json({
+                success: true,
+                message: "List added successfully",
+                post: list,
+            });
+        } catch (error) {
+            console.error("Error in /addlist:", error);
+            res.status(500).json({
                 success: false,
-                message: "Please upload an image.",
+                message: "Internal server error",
             });
         }
-
-        // Create a new listing
-
-        const list = await listingModel.create({
-            title,
-            description,
-            price,
-            location,
-            country,
-            image: imageUrl,
-            createdby: req.user,
-        });
-        res.status(200).json({
-            success: true,
-            message: "List added successfully",
-            post: list,
-        });
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({
-            success: false,
-            message: "Internal server error",
-        });
     }
-});
+);
 
 router.get("/alllist", async(req, res) => {
     try {

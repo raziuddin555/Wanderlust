@@ -20,7 +20,7 @@ function AddListing() {
   };
   const submitHandler = async (e) => {
     e.preventDefault();
-    addListFun(listing, setListing)
+    addListFun(listing,image, setListing)
     
   };
 
